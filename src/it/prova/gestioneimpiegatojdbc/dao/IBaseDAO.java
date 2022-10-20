@@ -13,9 +13,6 @@ public interface IBaseDAO<T> {
 	public int insert(T input) throws Exception;
 
 	public int delete(T input) throws Exception;
-	
-	public int deleteAll(T utenteInput) throws Exception;
-
 
 	public List<T> findByExample(T input) throws Exception;
 
