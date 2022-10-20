@@ -89,7 +89,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 		try (PreparedStatement ps = connection.prepareStatement(
 				"update compagnia set ragionesociale =?, fatturatoannuo=?, datafondazione=? where id =?;")) {
 			ps.setString(1, input.getRagioneSociale());
-			ps.setLong(2, input.getFatturatoAnnuo());
+			ps.setInt(2, input.getFatturatoAnnuo());
 			ps.setDate(3, new java.sql.Date(input.getDataFondazione().getTime()));
 			result = ps.executeUpdate();
 		} catch (Exception e) {
@@ -143,12 +143,6 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 	}
 
 	@Override
-	public List<Compagnia> findByExample(Compagnia input) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public List<Compagnia> findAllByRagioneSocialeContiene(String ragioneSocialeContieneInput) throws Exception {
 		if (isNotActive())
 			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
@@ -185,7 +179,7 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 		if (dataAssunzioneInput == null)
 			throw new Exception("Valore di input non ammesso.");
 		
-		List<Compagnia> listaCompegnie = new ArrayList<Compagnia>();
+		List<Compagnia> listaCompegnia = new ArrayList<Compagnia>();
 
 		Compagnia temp = null;
 		
@@ -198,14 +192,14 @@ public class CompagniaDAOImpl extends AbstractMySQLDAO implements CompagniaDAO {
 					temp.setFatturatoAnnuo(rs.getInt("fatturatoannuo"));
 					temp.setDataFondazione(rs.getDate("datafondazione"));
 					temp.setId(rs.getLong("ID"));
-					listaCompegnie.add(temp);
+					listaCompegnia.add(temp);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
-		return listaCompegnie;
+		return listaCompegnia;
 	}
 
 }

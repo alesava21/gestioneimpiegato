@@ -40,14 +40,16 @@ public class TestGestioneImpiegato {
 			testGetImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
-			testUpdateImpiegato(impiegatoDAOInstance);
+			//testUpdateImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
+			testDeleteCompagnia(compagniaDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+			
 			testDeleteImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 			
-			testDeleteCompagnia(compagniaDAOInstance);
-			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
+			
 
 		}
 
@@ -68,7 +70,7 @@ public class TestGestioneImpiegato {
 		System.out.println(".......testGet inizio.............");
 		List<Compagnia> elencoPresenti = compagniaDAOInstance.list();
 
-		Compagnia elementoRicercoColDAO = compagniaDAOInstance.get(1L);
+		Compagnia elementoRicercoColDAO = compagniaDAOInstance.get(44l);
 
 		System.out.println(elementoRicercoColDAO);
 
@@ -133,14 +135,11 @@ public class TestGestioneImpiegato {
 	private static void testInsertImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
 		System.out.println(".......testInsertImpiegato inizio.............");
 
-		Date dataNascita = new SimpleDateFormat("dd-MM-yyyy").parse("05-02-1995");
-		Date dataAssunzione = new SimpleDateFormat("dd-MM-yyyy").parse("05-02-1995");
-
 		Compagnia compagniaPerId = new Compagnia();
-		compagniaPerId.setId(3L);
+		compagniaPerId.setId(61l);
 
-		int quantiElementiInseriti = impiegatoDAOInstance.insert(new Impiegato("Alessandro", "sava", "alsgdysd",
-				new java.sql.Date(10 - 05 - 1900), new java.sql.Date(10 - 05 - 2000), compagniaPerId));
+		int quantiElementiInseriti = impiegatoDAOInstance
+				.insert(new Impiegato("Alessandro", "Sava", "hsdjhdfdsf", new java.sql.Date(2020, 01, 30), new java.sql.Date(2020, 01, 30),compagniaPerId));
 		if (quantiElementiInseriti < 1)
 			throw new RuntimeException("testInsertCompagnia : FAILED");
 
@@ -162,22 +161,16 @@ public class TestGestioneImpiegato {
 		System.out.println(".......testGetImpiegato fine: PASSED.............");
 	}
 
-	private static void testUpdateImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
-		System.out.println(".......testUpdateImpiegato inizio.............");
-
-		Impiegato impiegatoDaModificare = impiegatoDAOInstance.list().get(0);
-		impiegatoDaModificare.setNome("Pierpaolo");
-
-		impiegatoDAOInstance.update(impiegatoDaModificare);
-		System.out.println(impiegatoDaModificare);
-
-		System.out.println(".......testUpdateImpiegato fine.............");
-	}
 
 	private static void testDeleteImpiegato(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
 		System.out.println(".......testDeleteCompagnia inizio.............");
 
 		List<Impiegato> listaImpiegati = impiegatoDAOInstance.list();
+		 
+		Impiegato impiegatoCheVoglioEliminare= listaImpiegati.get(0);
+		
+		impiegatoDAOInstance.delete(impiegatoCheVoglioEliminare);
+		
 
 		if (listaImpiegati.isEmpty()) {
 			throw new RuntimeException("testDeleteCompagnia : FAILED, i nomi non corrispondono");
@@ -185,4 +178,5 @@ public class TestGestioneImpiegato {
 		}
 
 	}
+	
 }
