@@ -12,7 +12,7 @@ import it.prova.gestioneimpiegatojdbc.dao.AbstractMySQLDAO;
 import it.prova.gestioneimpiegatojdbc.model.Compagnia;
 import it.prova.gestioneimpiegatojdbc.model.Impiegato;
 
-public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO{
+public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO {
 
 	public ImpiegatoDAOImpl(Connection connection) {
 		super(connection);
@@ -65,7 +65,7 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO{
 					result.setNome(rs.getString("nome"));
 					result.setCognome(rs.getString("cognome"));
 					result.setCodiceFiscale(rs.getString("codicefiscale"));
-					result.setDataNascita(rs.getDate("datanascita"));
+					result.setDataNascita(rs.getDate("datadinascita"));
 					result.setDataAssunzione(rs.getDate("dataassunzione"));
 					result.setId(rs.getLong("ID"));
 				} else {
@@ -156,20 +156,23 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO{
 
 	@Override
 	public List<Impiegato> findAllByCompagnia(Compagnia compagniaInput) throws Exception {
-
+		
 		if (isNotActive())
 			throw new Exception("Connessione non attiva. Impossibile effettuare operazioni DAO.");
 
-		if (compagniaInput == null)
+		if (compagniaInput == null || compagniaInput.getId() == null || compagniaInput.getId() < 1)
 			throw new Exception("Valore di input non ammesso.");
 
-		ArrayList<Impiegato> result = new ArrayList<Impiegato>();
+		List<Impiegato> result = new ArrayList<Impiegato>();
 		Impiegato impiegatoTemp = null;
-		try (PreparedStatement ps = connection.prepareStatement(
-				"select * from impiegato i inner join compagnia c on c.id = i.compagnia_id where c.ragionesociale=?")) {
+		Compagnia compagniaTemp = null;
 
-			ps.setString(1, compagniaInput.getRagioneSociale());
+		try (PreparedStatement ps = connection.prepareStatement(
+				"select * from impiegato i inner join compagnia c on i.compagnia_id = c.id where compagnia_id = ?")) {
+			ps.setLong(1, compagniaInput.getId());
+
 			try (ResultSet rs = ps.executeQuery()) {
+
 				while (rs.next()) {
 					impiegatoTemp = new Impiegato();
 					impiegatoTemp.setNome(rs.getString("nome"));
@@ -177,15 +180,18 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO{
 					impiegatoTemp.setCodiceFiscale(rs.getString("codicefiscale"));
 					impiegatoTemp.setDataNascita(rs.getDate("datanascita"));
 					impiegatoTemp.setDataAssunzione(rs.getDate("dataassunzione"));
-					impiegatoTemp.setId(rs.getLong("id"));
+					impiegatoTemp.setId(rs.getLong("i.id"));
 
+					compagniaTemp = new Compagnia();
+					compagniaTemp.setRagioneSociale(rs.getString("ragionesociale"));
+					compagniaTemp.setFatturatoAnnuo(rs.getInt("fatturatoannuo"));
+					compagniaTemp.setDataFondazione(rs.getDate("datafondazione"));
+					compagniaTemp.setId(rs.getLong("c.id"));
+
+					impiegatoTemp.setCompagnia(compagniaTemp);
 					result.add(impiegatoTemp);
 				}
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
 		}
 		return result;
 	}
@@ -201,7 +207,7 @@ public class ImpiegatoDAOImpl extends AbstractMySQLDAO implements ImpiegatoDAO{
 
 		int contatore = 0;
 		try (PreparedStatement ps = connection.prepareStatement(
-				"select count(*) from impiegato i inner join compagnia c on c.id = i.compagnia_id where c.datafondazione > ?")) {
+				"select count(*) from impiegato i inner join compagnia c on c.id = i.compagnia_id where c.datafondazione > ?;")) {
 
 			ps.setDate(1, new java.sql.Date(dataFondazoneInput.getTime()));
 			try (ResultSet rs = ps.executeQuery()) {

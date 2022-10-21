@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.print.attribute.standard.MediaPrintableArea;
+
 import it.prova.gestioneimpiegatojdbc.connection.MyConnection;
 import it.prova.gestioneimpiegatojdbc.dao.compagnia.CompagniaDAO;
 import it.prova.gestioneimpiegatojdbc.dao.compagnia.CompagniaDAOImpl;
@@ -41,13 +44,20 @@ public class TestGestioneImpiegato {
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
 			//testUpdateImpiegato(impiegatoDAOInstance);
+			//System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+			
+			
+			
+			testCountByDataFondazioneCompagniaGreaterThan(impiegatoDAOInstance);
+			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+
+			
+			testDeleteImpiegato(impiegatoDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
 
 			testDeleteCompagnia(compagniaDAOInstance);
 			System.out.println("In tabella compagnia ci sono " + compagniaDAOInstance.list().size() + " elementi.");
-			
-			testDeleteImpiegato(impiegatoDAOInstance);
-			System.out.println("In tabella compagnia ci sono " + impiegatoDAOInstance.list().size() + " elementi.");
+		
 			
 			
 
@@ -87,7 +97,7 @@ public class TestGestioneImpiegato {
 
 		}
 
-		Compagnia compagniaCheVoglioEliminare = listaDelleCompagnie.get(0);
+		Compagnia compagniaCheVoglioEliminare = listaDelleCompagnie.get(1);
 
 		compagniaDAOInstance.delete(compagniaCheVoglioEliminare);
 		if (listaDelleCompagnie.isEmpty()) {
@@ -136,7 +146,7 @@ public class TestGestioneImpiegato {
 		System.out.println(".......testInsertImpiegato inizio.............");
 
 		Compagnia compagniaPerId = new Compagnia();
-		compagniaPerId.setId(61l);
+		compagniaPerId.setId(91l);
 
 		int quantiElementiInseriti = impiegatoDAOInstance
 				.insert(new Impiegato("Alessandro", "Sava", "hsdjhdfdsf", new java.sql.Date(2020, 01, 30), new java.sql.Date(2020, 01, 30),compagniaPerId));
@@ -154,7 +164,7 @@ public class TestGestioneImpiegato {
 			throw new RuntimeException("testGetImpiegato : FAILED, i nomi non corrispondono");
 		}
 
-		Impiegato elementoCheRicercoColDAO = impiegatoDAOInstance.get(1L);
+		Impiegato elementoCheRicercoColDAO = impiegatoDAOInstance.get(78L);
 
 		System.out.println(elementoCheRicercoColDAO);
 
@@ -176,7 +186,20 @@ public class TestGestioneImpiegato {
 			throw new RuntimeException("testDeleteCompagnia : FAILED, i nomi non corrispondono");
 
 		}
+		System.out.println(".......testDeleteImpiegato fine: PASSED.............");
 
+
+	}
+	
+	private static void testCountByDataFondazioneCompagniaGreaterThan(ImpiegatoDAO impiegatoDAOInstance) throws Exception {
+		System.out.println(".......testDeleteCompagnia inizio.............");
+
+		int test = impiegatoDAOInstance.countByDataFondazioneCompagniaGreaterThan(new java.sql.Date(1000, 01, 30));
+		
+		System.out.println(test);
+
+		
+		
 	}
 	
 }
